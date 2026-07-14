@@ -1,0 +1,32 @@
+# Скомпилированные объектные файлы
+*.o
+
+# Линкованные исполняемые файлы (FPC по умолчанию без расширения)
+*.exe
+*.out
+
+# Логи компиляции
+*.log
+
+# Backup-файлы
+*.bak
+*.ppu
+*.ppw
+*.pfc
+*.compiled
+*~
+
+# FPC unit files
+*.ppu
+*.o
+
+# Исполняемые файлы без расширения (скомпилированные бинарники)
+hello
+hello.exe
+
+# MiMoCode internal
+.mimocode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
