@@ -23,6 +23,9 @@
 # Исполняемые файлы без расширения (скомпилированные бинарники)
 hello
 hello.exe
+lessons/day01/01_variables
+lessons/day01/02_arithmetic
+lessons/day01/03_input
 
 # MiMoCode internal
 .mimocode/
