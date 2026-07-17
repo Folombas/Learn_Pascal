@@ -4,7 +4,7 @@
 FPC = fpc
 ROOT = $(shell pwd)
 
-.PHONY: all clean hello lessons day01 day02 help run-hello run-day01 run-day02
+.PHONY: all clean hello lessons day01 day02 day03 help run-hello run-day01 run-day02 run-day03
 
 all: hello lessons
 
@@ -13,7 +13,7 @@ hello: hello.pas
 	$(FPC) $<
 
 # --- Lessons ---
-lessons: day01 day02
+lessons: day01 day02 day03
 
 day01:
 	cd $(ROOT)/lessons/day01 && $(FPC) 01_variables.pas
@@ -24,6 +24,11 @@ day02:
 	cd $(ROOT)/lessons/day02 && $(FPC) 01_if_else.pas
 	cd $(ROOT)/lessons/day02 && $(FPC) 02_case.pas
 	cd $(ROOT)/lessons/day02 && $(FPC) 03_simple_calc.pas
+
+day03:
+	cd $(ROOT)/lessons/day03 && $(FPC) 01_ord.pas
+	cd $(ROOT)/lessons/day03 && $(FPC) 02_chr.pas
+	cd $(ROOT)/lessons/day03 && $(FPC) 03_caesar.pas
 
 # --- Utils ---
 clean:
@@ -48,6 +53,11 @@ run-day02: day02
 	@echo "--- 03_simple_calc (ввод: 1, 5, 3) ---"
 	@echo "1" | echo "5" | echo "3" | $(ROOT)/lessons/day02/03_simple_calc || true
 
+run-day03: day03
+	@for f in 01_ord 02_chr 03_caesar; do \
+		echo "--- $$f ---" && $(ROOT)/lessons/day03/$$f; \
+	done
+
 help:
 	@echo "Free Pascal Learning Project"
 	@echo ""
@@ -61,4 +71,6 @@ help:
 	@echo "  make run-day01  - Run all Day 01 programs"
 	@echo "  make day02      - Compile Day 02 lessons"
 	@echo "  make run-day02  - Run all Day 02 programs"
+	@echo "  make day03      - Compile Day 03 lessons"
+	@echo "  make run-day03  - Run all Day 03 programs"
 	@echo "  make help       - Show this help"
