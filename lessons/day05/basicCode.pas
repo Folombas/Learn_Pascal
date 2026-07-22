@@ -1,6 +1,6 @@
 program basicCode
 
-var:
+var
 	c: char;
 	n: integer;
 	s: string;
