@@ -1,4 +1,4 @@
-program basicCode
+program basicCode;
 
 var
 	c: char;
