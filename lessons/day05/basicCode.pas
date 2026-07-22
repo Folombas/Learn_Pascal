@@ -1,31 +1,36 @@
 program basicCode;
 
+uses SysUtils;
+
 var
-	c: char;
-	n: integer;
-	s: string;
+  c: char;
+  n: integer;
+  s: string;
 
 begin
-	// Символ -> код
-	Write('Введите символ: ');
-	Readln(s);
-	if s = '' then
-	begin
-		Writeln('Символ не введён.');
-		Halt;
-	end;
+  Write('Введите символ: ');
+  Readln(s);
 
-	c := s[1];
-	n := Ord(c);
-	Writeln('Код символа ', c, ' = ', n);
-	
-	Writeln;
-	
-	// Код -> символ
-	Write('Введите код символа: ');
-	Readln(c);
-	
-	// chr работает для диапазона символов; для обычного ASII обычно достаточно 0...255
-	c := Chr(n);
-	Writeln('Символ с кодом ', n, ' = ', c);
+  while (s <> '') and (s[1] = ' ') do
+    Delete(s, 1, 1);
+
+  if s = '' then
+  begin
+    Writeln('Символ не введён.');
+    Halt;
+  end;
+
+  c := s[1];
+  n := Ord(c);
+  Writeln('Код символа ', c, ' = ', n);
+
+  Writeln;
+
+  Write('Введите код символа: ');
+  Readln(s);
+  n := StrToInt(s);
+
+  c := Chr(n);
+  Writeln('Символ с кодом ', n, ' = ', c);
 end.
+
