@@ -1,4 +1,6 @@
 program Hello;
 begin
-  writeln('Мы начинаем изучать основы програмирования с помощью языка программирования Free Pascal');
+  writeln('Привет, мир!');
+  writeln('Это Free Pascal.');
 end.
+
