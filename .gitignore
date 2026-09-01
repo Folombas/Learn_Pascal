@@ -33,3 +33,6 @@ lessons/day01/03_input
 # OS-specific
 .DS_Store
 Thumbs.db
+
+# Все исполняемые файлы без расширения в папках lessons
+lessons/*/[a-z]*
