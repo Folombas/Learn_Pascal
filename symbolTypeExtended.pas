@@ -1,13 +1,12 @@
 program SymbolTypeExtended;
 var
-    s: string;
-    i: integer;
+    c: char;
+    code: integer;
 begin
-    writeln('Введите строку для анализа:');
-    readln(s);
-    for i := 1 to length(s) do
-    begin
-        c := s[i];
+    writeln('Вводите символы (для завершения введите точку):');
+    repeat
+        read(c);
+        readln;  // очистка буфера после символа
         code := ord(c);
         write('Символ ''', c, ''' (код ', code, ') - ');
         case c of
@@ -17,6 +16,6 @@ begin
         else
             writeln('неопознанный символ');
         end;
-    end;
+    until c = '.';
     writeln('Программа завершена.');
 end.
