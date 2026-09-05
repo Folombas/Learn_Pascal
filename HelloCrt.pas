@@ -2,7 +2,7 @@ program HelloCrt;
 uses crt;
 const
 	TheMessage = 'Hello, World Programming of Free Pascal';
-	DelayDuration = 3000; { 3 seconds }
+	DelayDuration = 5000; { 3 seconds }
 var
 	x, y: integer;
 begin
