@@ -82,6 +82,30 @@ begin
     clrscr
 end;
 
+{ Выводит координаты в правом верхнем углу }
+procedure ShowCoords(x, y: integer);
+begin
+    TextColor(7);  { белый цвет }
+    GotoXY(ScreenWidth - 12, 1);  { отступ справа }
+    write('X:', x:3, ' Y:', y:3);
+    GotoXY(1, 1)
+end;
+
+{ Скрывает координаты (затирает их пробелами) }
+procedure HideCoords;
+begin
+    GotoXY(ScreenWidth - 12, 1);
+    write('            ');
+    GotoXY(1, 1)
+end;
+
+{ Обновляет координаты при перемещении }
+procedure UpdateCoords(x, y: integer);
+begin
+    HideCoords;
+    ShowCoords(x, y)
+end;
+
 var
     CurX, CurY: integer;
     c: integer;
@@ -93,17 +117,13 @@ begin
     CurX := (ScreenWidth - length(TheMessage)) div 2;
     CurY := ScreenHeight div 2;
     ShowMessage(CurX, CurY, TheMessage, msgColor);
+    ShowCoords(CurX, CurY);   { сразу показываем координаты }
 
     while true do
     begin
         GetKey(c);
         if c = KeyEscape then
             break
-        else if c = 32 then  { пробел – сменить цвет }
-        begin
-            msgColor := (msgColor mod 15) + 1;  { циклически 1..15 }
-            ShowMessage(CurX, CurY, TheMessage, msgColor)  { перерисовать текущее сообщение новым цветом }
-        end
         else if c < 0 then  { расширенная клавиша }
         begin
             case c of
@@ -115,19 +135,13 @@ begin
                     MoveMessage(CurX, CurY, TheMessage, 0, -1, msgColor);
                 KeyDown:
                     MoveMessage(CurX, CurY, TheMessage, 0, 1, msgColor)
-            end
+            end;
+            UpdateCoords(CurX, CurY)   { обновляем координаты после перемещения }
         end
-        { иначе игнорируем другие обычные клавиши }
+        { другие клавиши игнорируем }
     end;
     clrscr
 end.
-	
-	
-	
-	
-	
-	
-	
 		
 		
 		
