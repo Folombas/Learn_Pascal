@@ -8,6 +8,22 @@ const
     KeyDown     = -80;
     TheMessage  = 'Hello, World of Free Pascal';
 
+var
+    Scale: integer = 1;   { текущий масштаб текста }
+
+{ Функция возвращает строку с дублированием каждого символа scale раз }
+function ScaleMessage(msg: string; scale: integer): string;
+var
+    i, j: integer;
+    res: string;
+begin
+    res := '';
+    for i := 1 to length(msg) do
+        for j := 1 to scale do
+            res := res + msg[i];
+    ScaleMessage := res
+end;
+
 procedure GetKey(var code: integer);
 var
     c: char;
@@ -25,18 +41,23 @@ begin
 end;
 
 procedure ShowMessage(x, y: integer; msg: string; color: byte);
+var
+    scaled: string;
 begin
+    scaled := ScaleMessage(msg, Scale);
     TextColor(color);
     GotoXY(x, y);
-    write(msg);
+    write(scaled);
     GotoXY(1, 1)
 end;
 
 procedure HideMessage(x, y: integer; msg: string);
 var
     len, i: integer;
+    scaled: string;
 begin
-    len := length(msg);
+    scaled := ScaleMessage(msg, Scale);
+    len := length(scaled);
     GotoXY(x, y);
     for i := 1 to len do
         write(' ');
@@ -81,6 +102,16 @@ begin
     clrscr
 end;
 
+{ Центрирует сообщение, обновляя глобальные CurX и CurY }
+procedure CenterMessage(var x, y: integer; msg: string);
+var
+    scaled: string;
+begin
+    scaled := ScaleMessage(msg, Scale);
+    x := (ScreenWidth - length(scaled)) div 2;
+    y := ScreenHeight div 2
+end;
+
 var
     CurX, CurY: integer;
     c: integer;
@@ -89,29 +120,65 @@ begin
     clrscr;
     msgColor := SelectColor;
     
-    CurX := (ScreenWidth - length(TheMessage)) div 2;
-    CurY := ScreenHeight div 2;
+    CenterMessage(CurX, CurY, TheMessage);
     ShowMessage(CurX, CurY, TheMessage, msgColor);
     
     while true do
     begin
         GetKey(c);
         if c > 0 then        { non-extended code; quit }
-            break;
-        case c of
-            KeyLeft:
-                MoveMessage(CurX, CurY, TheMessage, -1, 0, msgColor);
-            KeyRight:
-                MoveMessage(CurX, CurY, TheMessage, 1, 0, msgColor);
-            KeyUp:
-                MoveMessage(CurX, CurY, TheMessage, 0, -1, msgColor);
-            KeyDown:
-                MoveMessage(CurX, CurY, TheMessage, 0, 1, msgColor)
+        begin
+            { Если нажата '+' или '-' или 'r' – обрабатываем как специальные }
+            if c = 43 then   { '+' }
+            begin
+                if Scale < 5 then
+                begin
+                    HideMessage(CurX, CurY, TheMessage);
+                    Inc(Scale);
+                    CenterMessage(CurX, CurY, TheMessage);
+                    ShowMessage(CurX, CurY, TheMessage, msgColor)
+                end
+            end
+            else if c = 45 then  { '-' }
+            begin
+                if Scale > 1 then
+                begin
+                    HideMessage(CurX, CurY, TheMessage);
+                    Dec(Scale);
+                    CenterMessage(CurX, CurY, TheMessage);
+                    ShowMessage(CurX, CurY, TheMessage, msgColor)
+                end
+            end
+            else if c = 114 then { 'r' – сброс к 1 }
+            begin
+                if Scale <> 1 then
+                begin
+                    HideMessage(CurX, CurY, TheMessage);
+                    Scale := 1;
+                    CenterMessage(CurX, CurY, TheMessage);
+                    ShowMessage(CurX, CurY, TheMessage, msgColor)
+                end
+            end
+            else
+                break   { любая другая обычная клавиша – выход }
+        end
+        else
+        begin
+            { расширенная клавиша – стрелки }
+            case c of
+                KeyLeft:
+                    MoveMessage(CurX, CurY, TheMessage, -1, 0, msgColor);
+                KeyRight:
+                    MoveMessage(CurX, CurY, TheMessage, 1, 0, msgColor);
+                KeyUp:
+                    MoveMessage(CurX, CurY, TheMessage, 0, -1, msgColor);
+                KeyDown:
+                    MoveMessage(CurX, CurY, TheMessage, 0, 1, msgColor)
+            end
         end
     end;
     clrscr
 end.
-			
 			
 			
 			
