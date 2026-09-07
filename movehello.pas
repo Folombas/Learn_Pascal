@@ -6,23 +6,8 @@ const
     KeyRight    = -77;
     KeyUp       = -72;
     KeyDown     = -80;
+    KeyEscape   = 27;
     TheMessage  = 'Hello, World of Free Pascal';
-
-var
-    Scale: integer = 1;   { текущий масштаб текста }
-
-{ Функция возвращает строку с дублированием каждого символа scale раз }
-function ScaleMessage(msg: string; scale: integer): string;
-var
-    i, j: integer;
-    res: string;
-begin
-    res := '';
-    for i := 1 to length(msg) do
-        for j := 1 to scale do
-            res := res + msg[i];
-    ScaleMessage := res
-end;
 
 procedure GetKey(var code: integer);
 var
@@ -41,23 +26,18 @@ begin
 end;
 
 procedure ShowMessage(x, y: integer; msg: string; color: byte);
-var
-    scaled: string;
 begin
-    scaled := ScaleMessage(msg, Scale);
     TextColor(color);
     GotoXY(x, y);
-    write(scaled);
+    write(msg);
     GotoXY(1, 1)
 end;
 
 procedure HideMessage(x, y: integer; msg: string);
 var
     len, i: integer;
-    scaled: string;
 begin
-    scaled := ScaleMessage(msg, Scale);
-    len := length(scaled);
+    len := length(msg);
     GotoXY(x, y);
     for i := 1 to len do
         write(' ');
@@ -77,7 +57,7 @@ var
     i: integer;
 begin
     clrscr;
-    writeln('Выберите цвет текста (введите номер от 1 до 15):');
+    writeln('Выберите начальный цвет текста (введите номер от 1 до 15):');
     writeln;
     for i := 1 to 15 do
     begin
@@ -86,7 +66,7 @@ begin
     end;
     writeln;
     writeln;
-    TextColor(7);  { возвращаем стандартный цвет }
+    TextColor(7);
     writeln('Ваш выбор: ');
 end;
 
@@ -102,16 +82,6 @@ begin
     clrscr
 end;
 
-{ Центрирует сообщение, обновляя глобальные CurX и CurY }
-procedure CenterMessage(var x, y: integer; msg: string);
-var
-    scaled: string;
-begin
-    scaled := ScaleMessage(msg, Scale);
-    x := (ScreenWidth - length(scaled)) div 2;
-    y := ScreenHeight div 2
-end;
-
 var
     CurX, CurY: integer;
     c: integer;
@@ -119,52 +89,23 @@ var
 begin
     clrscr;
     msgColor := SelectColor;
-    
-    CenterMessage(CurX, CurY, TheMessage);
+
+    CurX := (ScreenWidth - length(TheMessage)) div 2;
+    CurY := ScreenHeight div 2;
     ShowMessage(CurX, CurY, TheMessage, msgColor);
-    
+
     while true do
     begin
         GetKey(c);
-        if c > 0 then        { non-extended code; quit }
+        if c = KeyEscape then
+            break
+        else if c = 32 then  { пробел – сменить цвет }
         begin
-            { Если нажата '+' или '-' или 'r' – обрабатываем как специальные }
-            if c = 43 then   { '+' }
-            begin
-                if Scale < 5 then
-                begin
-                    HideMessage(CurX, CurY, TheMessage);
-                    Inc(Scale);
-                    CenterMessage(CurX, CurY, TheMessage);
-                    ShowMessage(CurX, CurY, TheMessage, msgColor)
-                end
-            end
-            else if c = 45 then  { '-' }
-            begin
-                if Scale > 1 then
-                begin
-                    HideMessage(CurX, CurY, TheMessage);
-                    Dec(Scale);
-                    CenterMessage(CurX, CurY, TheMessage);
-                    ShowMessage(CurX, CurY, TheMessage, msgColor)
-                end
-            end
-            else if c = 114 then { 'r' – сброс к 1 }
-            begin
-                if Scale <> 1 then
-                begin
-                    HideMessage(CurX, CurY, TheMessage);
-                    Scale := 1;
-                    CenterMessage(CurX, CurY, TheMessage);
-                    ShowMessage(CurX, CurY, TheMessage, msgColor)
-                end
-            end
-            else
-                break   { любая другая обычная клавиша – выход }
+            msgColor := (msgColor mod 15) + 1;  { циклически 1..15 }
+            ShowMessage(CurX, CurY, TheMessage, msgColor)  { перерисовать текущее сообщение новым цветом }
         end
-        else
+        else if c < 0 then  { расширенная клавиша }
         begin
-            { расширенная клавиша – стрелки }
             case c of
                 KeyLeft:
                     MoveMessage(CurX, CurY, TheMessage, -1, 0, msgColor);
@@ -176,30 +117,10 @@ begin
                     MoveMessage(CurX, CurY, TheMessage, 0, 1, msgColor)
             end
         end
+        { иначе игнорируем другие обычные клавиши }
     end;
     clrscr
 end.
-			
-			
-			
-			
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
