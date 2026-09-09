@@ -85,13 +85,13 @@ end;
 { Выводит координаты в правом верхнем углу }
 procedure ShowCoords(x, y: integer);
 begin
-    TextColor(7);  { белый цвет }
-    GotoXY(ScreenWidth - 12, 1);  { отступ справа }
+    TextColor(7);
+    GotoXY(ScreenWidth - 12, 1);
     write('X:', x:3, ' Y:', y:3);
     GotoXY(1, 1)
 end;
 
-{ Скрывает координаты (затирает их пробелами) }
+{ Скрывает координаты }
 procedure HideCoords;
 begin
     GotoXY(ScreenWidth - 12, 1);
@@ -99,11 +99,35 @@ begin
     GotoXY(1, 1)
 end;
 
-{ Обновляет координаты при перемещении }
+{ Обновляет координаты }
 procedure UpdateCoords(x, y: integer);
 begin
     HideCoords;
     ShowCoords(x, y)
+end;
+
+{ Показывает текущий цвет слева от координат }
+procedure ShowColorInfo(color: byte);
+begin
+    TextColor(7);
+    GotoXY(1, 1);
+    write('Color:', color:2);
+    GotoXY(1, 1)
+end;
+
+{ Скрывает информацию о цвете }
+procedure HideColorInfo;
+begin
+    GotoXY(1, 1);
+    write('       ');
+    GotoXY(1, 1)
+end;
+
+{ Обновляет информацию о цвете }
+procedure UpdateColorInfo(color: byte);
+begin
+    HideColorInfo;
+    ShowColorInfo(color)
 end;
 
 var
@@ -117,13 +141,21 @@ begin
     CurX := (ScreenWidth - length(TheMessage)) div 2;
     CurY := ScreenHeight div 2;
     ShowMessage(CurX, CurY, TheMessage, msgColor);
-    ShowCoords(CurX, CurY);   { сразу показываем координаты }
+    ShowCoords(CurX, CurY);
+    ShowColorInfo(msgColor);   { показываем начальный цвет }
 
     while true do
     begin
         GetKey(c);
         if c = KeyEscape then
             break
+        else if c = 32 then   { пробел – смена цвета }
+        begin
+            { циклически меняем цвет 1..15 }
+            msgColor := (msgColor mod 15) + 1;
+            ShowMessage(CurX, CurY, TheMessage, msgColor);
+            UpdateColorInfo(msgColor)
+        end
         else if c < 0 then  { расширенная клавиша }
         begin
             case c of
@@ -136,15 +168,12 @@ begin
                 KeyDown:
                     MoveMessage(CurX, CurY, TheMessage, 0, 1, msgColor)
             end;
-            UpdateCoords(CurX, CurY)   { обновляем координаты после перемещения }
+            UpdateCoords(CurX, CurY)
         end
         { другие клавиши игнорируем }
     end;
     clrscr
 end.
-		
-		
-		
 		
 		
 		
