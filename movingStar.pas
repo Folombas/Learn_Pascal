@@ -28,12 +28,13 @@ end;
 type
     star = record
         CurX, CurY, dx, dy: integer;
+        Symbol: char;                { новый символ звезды }
     end;
 
 procedure ShowStar(var s: star);
 begin
     GotoXY(s.CurX, s.CurY);
-    write('*');
+    write(s.Symbol);                 { используем сохранённый символ }
     GotoXY(1, 1)
 end;
 
@@ -77,7 +78,9 @@ begin
     s.CurY := ScreenHeight div 2;
     s.dx := 0;
     s.dy := 0;
+    s.Symbol := '*';                 { начальный символ }
     ShowStar(s);
+
     while true do
     begin
         if not KeyPressed then
@@ -93,14 +96,16 @@ begin
             KeyUp:      SetDirection(s, 0, -1);
             KeyDown:    SetDirection(s, 0, 1);
             ord(' '):   SetDirection(s, 0, 0);
-            KeyEscape: break
+            ord('1'):   begin HideStar(s); s.Symbol := '*'; ShowStar(s) end;
+            ord('2'):   begin HideStar(s); s.Symbol := '+'; ShowStar(s) end;
+            ord('3'):   begin HideStar(s); s.Symbol := 'o'; ShowStar(s) end;
+            ord('4'):   begin HideStar(s); s.Symbol := 'x'; ShowStar(s) end;
+            ord('5'):   begin HideStar(s); s.Symbol := '#'; ShowStar(s) end;
+            KeyEscape:  break
         end
     end;
     clrscr
 end.
-
-
-
 
 
 
