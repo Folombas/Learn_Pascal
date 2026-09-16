@@ -13,5 +13,5 @@ begin
 		M:=c;
 	if d>M then
 		M:=d;
-	writeln('Наибольшее число', M);
+	writeln('Наибольшее число: ', M);
 end.
