@@ -5,23 +5,19 @@ var
   isEqual: boolean;
 
 begin
-  // Присваивание с помощью :=
-  a := 5;
-  b := 10;
-  
+  write('Введите первое число (a): ');
+  readln(a);
+  write('Введите второе число (b): ');
+  readln(b);
+
   writeln('a = ', a);
   writeln('b = ', b);
-  
-  // Сравнение с помощью =
+
+  // Присваивание результата сравнения
   isEqual := (a = b);
   writeln('a = b? ', isEqual);
-  
-  // Меняем b
-  b := 5;
-  isEqual := (a = b);
-  writeln('После изменения b: a = b? ', isEqual);
-  
-  // Сравнение прямо в условии
+
+  // Сравнение в условии
   if a = b then
     writeln('a и b равны')
   else
