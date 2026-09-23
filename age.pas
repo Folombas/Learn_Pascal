@@ -1,52 +1,83 @@
+{$mode objfpc}{$H+}
 program age;
 
 {
   Считает полное число лет по дате рождения и текущей дате.
 
-  Пользователь вводит:
-    - день, месяц и год рождения
-    - день, месяц и год сегодняшней даты
-
-  Программа выводит, сколько полных лет исполнилось
-  на сегодняшний день.
+  Даты вводятся одной строкой в формате ДД.ММ.ГГГГ,
+  например: 30.11.1987
 }
 
+uses
+  SysUtils;
+
+type
+  TDate = record
+    Day, Month, Year: integer;
+  end;
+
+{ --- Разбор строки вида "ДД.ММ.ГГГГ" --- }
+function ParseDate(const s: string; var d: TDate): boolean;
 var
-	bDay, bMonth, bYear: integer;	{ дата рождения }
-	tDay, tMonth, tYear: integer;	{ сегодняшняя дата }
-	years: integer;
-	
+  parts: TStringArray;
 begin
-	writeln('=== Расчёт полного возраста ===');
-	writeln;
-	
+  ParseDate := false;
+  parts := s.Split(['.', '/', '-']);
+  if Length(parts) <> 3 then
+    Exit;
+  try
+    d.Day   := StrToInt(Trim(parts[0]));
+    d.Month := StrToInt(Trim(parts[1]));
+    d.Year  := StrToInt(Trim(parts[2]));
+    ParseDate := true;
+  except
+    ParseDate := false;
+  end;
+end;
+
+{ --- Проверка корректности даты --- }
+function IsValidDate(const d: TDate): boolean;
+begin
+  IsValidDate := (d.Day >= 1) and (d.Day <= 31) and
+                 (d.Month >= 1) and (d.Month <= 12) and
+                 (d.Year >= 1900) and (d.Year <= 2100);
+end;
+
+var
+  b, t: TDate;
+  s: string;
+  years: integer;
+
+begin
+  writeln('=== Расчёт полного возраста ===');
+  writeln;
 
   { --- Ввод даты рождения --- }
-  writeln('Введите дату рождения:');
-  write('  день:  ');  readln(bDay);
-  write('  месяц: ');  readln(bMonth);
-  write('  год:   ');  readln(bYear);
+  repeat
+    write('Введите дату рождения (ДД.ММ.ГГГГ): ');
+    readln(s);
+    if not ParseDate(s, b) then
+      writeln('  Ошибка формата. Пример: 30.11.1987');
+  until ParseDate(s, b) and IsValidDate(b);
   writeln;
 
   { --- Ввод сегодняшней даты --- }
-  writeln('Введите сегодняшнюю дату:');
-  write('  день:  ');  readln(tDay);
-  write('  месяц: ');  readln(tMonth);
-  write('  год:   ');  readln(tYear);
+  repeat
+    write('Введите сегодняшнюю дату (ДД.ММ.ГГГГ): ');
+    readln(s);
+    if not ParseDate(s, t) then
+      writeln('  Ошибка формата. Пример: 23.09.2026');
+  until ParseDate(s, t) and IsValidDate(t);
   writeln;
 
-  { --- Основной расчёт --- }
-  { Сначала считаем разницу по годам }
-  years := tYear - bYear;
-
-  { Если день рождения в этом году ещё не наступил — вычитаем 1 }
-  if (tMonth < bMonth) or ((tMonth = bMonth) and (tDay < bDay)) then
+  { --- Расчёт --- }
+  years := t.Year - b.Year;
+  if (t.Month < b.Month) or ((t.Month = b.Month) and (t.Day < b.Day)) then
     years := years - 1;
 
   { --- Вывод --- }
-  writeln('Дата рождения:  ', bDay, '.', bMonth, '.', bYear);
-  writeln('Сегодня:        ', tDay, '.', tMonth, '.', tYear);
+  writeln('Дата рождения: ', b.Day, '.', b.Month, '.', b.Year);
+  writeln('Сегодня:       ', t.Day, '.', t.Month, '.', t.Year);
   writeln;
   writeln('Полных лет: ', years);
 end.
-	
