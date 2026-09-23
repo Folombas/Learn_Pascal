@@ -2,14 +2,15 @@
 program age;
 
 {
-  Считает полное число лет по дате рождения и текущей дате.
+  Считает полное число лет по дате рождения.
 
-  Даты вводятся одной строкой в формате ДД.ММ.ГГГГ,
-  например: 30.11.1987
+  Дата рождения вводится одной строкой в формате ДД.ММ.ГГГГ.
+  Сегодняшняя дата подставляется автоматически из системы
+  через Now и DecodeDate.
 }
 
 uses
-  SysUtils;
+  SysUtils, DateUtils;
 
 type
   TDate = record
@@ -43,6 +44,17 @@ begin
                  (d.Year >= 1900) and (d.Year <= 2100);
 end;
 
+{ --- Получить сегодняшнюю дату из системы --- }
+function Today: TDate;
+var
+  y, m, dd: word;
+begin
+  DecodeDate(Now, y, m, dd);
+  Today.Year  := y;
+  Today.Month := m;
+  Today.Day   := dd;
+end;
+
 var
   b, t: TDate;
   s: string;
@@ -61,14 +73,8 @@ begin
   until ParseDate(s, b) and IsValidDate(b);
   writeln;
 
-  { --- Ввод сегодняшней даты --- }
-  repeat
-    write('Введите сегодняшнюю дату (ДД.ММ.ГГГГ): ');
-    readln(s);
-    if not ParseDate(s, t) then
-      writeln('  Ошибка формата. Пример: 23.09.2026');
-  until ParseDate(s, t) and IsValidDate(t);
-  writeln;
+  { --- Сегодняшняя дата берётся из системы --- }
+  t := Today;
 
   { --- Расчёт --- }
   years := t.Year - b.Year;
@@ -77,7 +83,8 @@ begin
 
   { --- Вывод --- }
   writeln('Дата рождения: ', b.Day, '.', b.Month, '.', b.Year);
-  writeln('Сегодня:       ', t.Day, '.', t.Month, '.', t.Year);
+  writeln('Сегодня:       ', t.Day, '.', t.Month, '.', t.Year,
+          '  (взято из системы)');
   writeln;
   writeln('Полных лет: ', years);
 end.
